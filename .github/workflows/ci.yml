@@ -13,8 +13,8 @@ jobs:
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       LATEST_VERSION: ${{ vars.LATEST_VERSION }}
 
-    services:
-      - docker
+    # services:
+    #   - docker
 
     steps:
       - name: Checkout Repository
