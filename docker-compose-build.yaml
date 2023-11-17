@@ -1,0 +1,18 @@
+version: "3"
+services:
+  reverseproxy:
+    build:
+      context: ./udagram-reverseproxy
+    image: $DOCKER_USERNAME/reverseproxy:$DOCKER_IMAGE_LATEST_VERSION
+  backend_user:
+    build:
+      context: ./udagram-api-user
+    image: $DOCKER_USERNAME/udagram-api-user:$DOCKER_IMAGE_LATEST_VERSION
+  backend_feed:
+    build:
+      context: ./udagram-api-feed
+    image: $DOCKER_USERNAME/udagram-api-feed:$DOCKER_IMAGE_LATEST_VERSION
+  frontend:
+    build:
+      context: ./udagram-frontend
+    image: $DOCKER_USERNAME/udagram-frontend:$DOCKER_IMAGE_LATEST_VERSION
