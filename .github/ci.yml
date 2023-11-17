@@ -1,0 +1,38 @@
+name: Docker Build and Push
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    env:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      LATEST_VERSION: ${{ vars.LATEST_VERSION }}
+
+    services:
+      - docker
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Build Docker Images
+        run: |
+          docker build --no-cache ./udagram-reverseproxy -t ${{ env.DOCKER_USERNAME }}/reverseproxy:${{ env.LATEST_VERSION }}
+          docker build --no-cache ./udagram-frontend -t ${{ env.DOCKER_USERNAME }}/udagram-frontend:${{ env.LATEST_VERSION }}
+          docker build --no-cache ./udagram-api-feed -t ${{ env.DOCKER_USERNAME }}/udagram-api-feed:${{ env.LATEST_VERSION }}
+          docker build --no-cache ./udagram-api-user -t ${{ env.DOCKER_USERNAME }}/udagram-api-user:${{ env.LATEST_VERSION }}
+          docker images
+
+      - name: Docker Login and Push
+        run: |
+          echo "${{ env.DOCKER_PASSWORD }}" | docker login -u "${{ env.DOCKER_USERNAME }}" --password-stdin
+          docker push ${{ env.DOCKER_USERNAME }}/reverseproxy:${{ env.LATEST_VERSION }}
+          docker push ${{ env.DOCKER_USERNAME }}/udagram-frontend:${{ env.LATEST_VERSION }}
+          docker push ${{ env.DOCKER_USERNAME }}/udagram-api-feed:${{ env.LATEST_VERSION }}
+          docker push ${{ env.DOCKER_USERNAME }}/udagram-api-user:${{ env.LATEST_VERSION }}
